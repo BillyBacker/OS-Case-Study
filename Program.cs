@@ -38,7 +38,6 @@ namespace Problem01
         }
         static void sum(int id)
         {
-            Console.WriteLine(id);
             int sum_local = 0;
             for (int j = id; j < 1000000000; j += threadCount){
                 if (Data_Global[j] % 2 == 0)
@@ -98,7 +97,7 @@ namespace Problem01
             for (i = 0; i < threadCount; i++) {
                 threads[i] = new Thread(() => sum(i));
                 threads[i].Start();
-                // Thread.Sleep(1);
+                Console.WriteLine("Launching Thread {0}", i);
             }
             for (i = 0; i < threadCount; i++) {
                 threads[i].Join();
