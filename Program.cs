@@ -13,6 +13,7 @@ namespace Problem01
         static long Sum_Global = 0;
         static int G_index = 0;
         static int threadCount = 16;
+        static bool reading = false;
 
         static int ReadData()
         {
@@ -38,8 +39,10 @@ namespace Problem01
         }
         static void sum(int id)
         {
+            int i = id;
+            reading = false;
             int sum_local = 0;
-            for (int j = id; j < 1000000000; j += threadCount){
+            for (int j = i; j < 1000000000; j += threadCount){
                 if (Data_Global[j] % 2 == 0)
                 {
                     sum_local -= Data_Global[j];
@@ -95,9 +98,11 @@ namespace Problem01
             // }
             Thread[] threads = new Thread[threadCount];
             for (i = 0; i < threadCount; i++) {
+                reading = true;
                 threads[i] = new Thread(() => sum(i));
                 threads[i].Start();
-                Console.WriteLine("Launching Thread {0}", i);
+                // Console.WriteLine("Launching Thread {0}", i);
+                while(reading){};
             }
             for (i = 0; i < threadCount; i++) {
                 threads[i].Join();
