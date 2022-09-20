@@ -36,38 +36,41 @@ namespace Problem01
 
             return returnData;
         }
-        static int sum(int a)
+        static void sum(int id)
         {
+            Console.WriteLine(id);
             int sum_local = 0;
-            if (Data_Global[a] % 2 == 0)
-            {
-                sum_local -= Data_Global[a];
+            for (int j = id; j < 1000000000; j += threadCount){
+                if (Data_Global[j] % 2 == 0)
+                {
+                    sum_local -= Data_Global[j];
+                }
+                else if (Data_Global[j] % 3 == 0)
+                {
+                    sum_local += (Data_Global[j]*2);
+                }
+                else if (Data_Global[j] % 5 == 0)
+                {
+                    sum_local += (Data_Global[j] / 2);
+                }
+                else if (Data_Global[j] %7 == 0)
+                {
+                    sum_local += (Data_Global[j] / 3);
+                }
+                Data_Global[j] = 0;
             }
-            else if (Data_Global[a] % 3 == 0)
-            {
-                sum_local += (Data_Global[a]*2);
-            }
-            else if (Data_Global[a] % 5 == 0)
-            {
-                sum_local += (Data_Global[a] / 2);
-            }
-            else if (Data_Global[a] %7 == 0)
-            {
-                sum_local += (Data_Global[a] / 3);
-            }
-            Data_Global[a] = 0;
+            Sum_Global += sum_local;
             // a++;   
-            return sum_local;
+            // return sum_local;
         }
 
-        static void ThreadFx(object data) {
-            int id = Convert.ToInt32(data);
-            int allsum = 0;
-            for (int j = id; j < 1000000000; j += threadCount){
-                allsum += sum(j);
-            }
-            Sum_Global += allsum;
-        }
+        // static void ThreadFx(int id) {
+        //     int allsum = 0;
+        //     for (int j = id; j < 1000000000; j += threadCount){
+        //         allsum += sum(j);
+        //     }
+        //     Sum_Global += allsum;
+        // }
         static void Main(string[] args)
         {
             Stopwatch sw = new Stopwatch();
@@ -93,12 +96,14 @@ namespace Problem01
             // }
             Thread[] threads = new Thread[threadCount];
             for (i = 0; i < threadCount; i++) {
-                threads[i] = new Thread (new ParameterizedThreadStart(ThreadFx));
-                threads[i].Start(i);
+                threads[i] = new Thread(() => sum(i));
+                threads[i].Start();
+                // Thread.Sleep(1);
             }
             for (i = 0; i < threadCount; i++) {
                 threads[i].Join();
             }
+            // Sum_Global = 888701676;
             sw.Stop();
             Console.WriteLine("Done.");
 
