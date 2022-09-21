@@ -12,7 +12,7 @@ namespace Problem01
         static byte[] Data_Global = new byte[1000000000];
         static long Sum_Global = 0;
         static int G_index = 0;
-        static int threadCount = 16;
+        static int threadCount = 8;
         static bool reading = false;
 
         static int ReadData()
@@ -93,17 +93,21 @@ namespace Problem01
             /* Start */
             Console.Write("\n\nWorking...");
             sw.Start();
-            // for (i = 0; i < 1000000000; i++){
-            //     sum(i);
-            // }
+            // int worker; 
+            // int ioCompletion;
+
+            // ThreadPool.GetMaxThreads(out worker, out ioCompletion);
+
             Thread[] threads = new Thread[threadCount];
             for (i = 0; i < threadCount; i++) {
                 reading = true;
                 threads[i] = new Thread(() => sum(i));
+                threads[i].Priority = ThreadPriority.Highest;
                 threads[i].Start();
-                // Console.WriteLine("Launching Thread {0}", i);
-                while(reading){};
+                Console.WriteLine("Launching Thread {0}", i);
+                // while(reading){};
             }
+            
             for (i = 0; i < threadCount; i++) {
                 threads[i].Join();
             }
